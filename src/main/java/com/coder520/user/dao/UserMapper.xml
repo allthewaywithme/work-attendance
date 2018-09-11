@@ -8,16 +8,43 @@
     <result column="mobile" jdbcType="VARCHAR" property="mobile" />
     <result column="real_name" jdbcType="VARCHAR" property="realName" />
     <result column="head_image" jdbcType="VARCHAR" property="headImage" />
+    <collection property="roleList" resultMap="RoleResultMap"/>
   </resultMap>
+  <resultMap id="RoleResultMap" type="com.coder520.user.entity.Role" >
+    <id column="roleid" property="roleid" jdbcType="BIGINT" />
+    <result column="role" property="role" jdbcType="VARCHAR" />
+    <result column="rd" property="description" jdbcType="VARCHAR" />
+    <collection property="permissionList" resultMap="PermissionResultMap"/>
+  </resultMap>
+  <resultMap id="PermissionResultMap" type="com.coder520.user.entity.Permission" >
+    <id column="permissionid" property="permissionid" jdbcType="BIGINT" />
+    <result column="permission" property="permission" jdbcType="VARCHAR" />
+    <result column="pd" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Permission_Column_List" >
+    permissionid, permission, p.description pd
+  </sql>
+  <sql id="Role_Column_List" >
+    roleid, role, r.description rd
+  </sql>
   <sql id="Base_Column_List">
     id, username, password, mobile, real_name, head_image
   </sql>
 
   <select id="selectByUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from user
-    where username = #{username,jdbcType=BIGINT}
+    <!--select-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from user-->
+    <!--where username = #{username,jdbcType=BIGINT}-->
+    SELECT
+    <include refid="Base_Column_List" />, <include refid="Role_Column_List" />,
+    <include refid="Permission_Column_List" />
+    FROM user u
+    LEFT JOIN user_role ur ON  ur.user_id = u.id
+    LEFT JOIN role r ON ur.role_id=r.roleid
+    LEFT JOIN role_permission rp ON rp.role_id=r.roleid
+    LEFT JOIN permission p ON p.permissionid = rp.permission_id
+    WHERE username = #{username}
   </select>
 
 

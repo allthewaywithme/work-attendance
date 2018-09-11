@@ -30,7 +30,7 @@ public class SessionInterceptor implements HandlerInterceptor {
         }
 
        //转发到登陆
-        request.getRequestDispatcher("/login/lk").forward(request,response);
+        request.getRequestDispatcher("/login").forward(request,response);
         return false;
     }
 

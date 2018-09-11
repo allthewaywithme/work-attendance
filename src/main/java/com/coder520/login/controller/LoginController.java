@@ -3,6 +3,9 @@ package com.coder520.login.controller;
 import com.coder520.common.utils.MD5Utils;
 import com.coder520.user.entity.User;
 import com.coder520.user.service.UserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +32,7 @@ public class LoginController {
     private UserService userService;
 
 
-    @RequestMapping("lk")
+    @RequestMapping
     public String login(){
         return "login";
     }
@@ -47,7 +50,18 @@ public class LoginController {
         String username=request.getParameter("username");
         String pwd=request.getParameter("password");
 
-        User user = userService.findUserByUserName(username);
+        UsernamePasswordToken token = new UsernamePasswordToken(username, pwd);
+//        token.setRememberMe(true);
+        Subject subject = SecurityUtils.getSubject();
+        try {
+            subject.login(token);
+            SecurityUtils.getSubject().getSession().setTimeout(1800000);
+        } catch (Exception e) {
+            return "login_fail";
+        }
+        return "login_succ";
+
+        /*User user = userService.findUserByUserName(username);
         if (user!=null){
             if (MD5Utils.checkPassword(pwd,user.getPassword())){
                 request.getSession().setAttribute("userinfo",user);
@@ -58,7 +72,7 @@ public class LoginController {
         }else {
             return "login_fail";
         }
-
+*/
 
     }
 

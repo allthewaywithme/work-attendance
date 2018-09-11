@@ -1,8 +1,7 @@
 package com.coder520.attend.dao;
 
 import com.coder520.attend.entity.Attend;
-import com.coder520.vo.QueryCondition;
-//import com.coder520.attend.vo.QueryCondition;
+import com.coder520.attend.vo.QueryCondition;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public interface AttendMapper {
     Attend selectTodaySignRecord(Long userId);
 
     int countByCondition(QueryCondition condition);
-//
+
     List<Attend> selectAttendPage(QueryCondition condition);
 
     List<Long> selectTodayAbsence();

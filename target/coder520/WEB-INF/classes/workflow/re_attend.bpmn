@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1498744195092" name="" targetNamespace="http://www.activiti.org/test" typeLanguage="http://www.w3.org/2001/XMLSchema">
-  <process id="re_attend" isClosed="false" isExecutable="true" name="补签工作流" processType="None">
+  <process id="re_attend" isClosed="false" isExecutable="true" name="补签启动" processType="None">
     <startEvent id="re_attend_start" name="补签启动"/>
     <userTask activiti:exclusive="true" id="re_attend_active" name="用户补签"/>
     <sequenceFlow id="_4" sourceRef="re_attend_start" targetRef="re_attend_active"/>
@@ -35,21 +35,21 @@
           <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="_4" id="BPMNEdge__4" sourceElement="_2" targetElement="_3">
+      <bpmndi:BPMNEdge bpmnElement="_4" id="BPMNEdge__4" sourceElement="re_attend_start" targetElement="re_attend_active">
         <omgdi:waypoint x="92.0" y="176.0"/>
         <omgdi:waypoint x="165.0" y="207.5"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_6" id="BPMNEdge__6" sourceElement="_3" targetElement="_5">
+      <bpmndi:BPMNEdge bpmnElement="_6" id="BPMNEdge__6" sourceElement="re_attend_active" targetElement="re_attend_approve">
         <omgdi:waypoint x="250.0" y="207.5"/>
         <omgdi:waypoint x="365.0" y="227.5"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_8" id="BPMNEdge__8" sourceElement="_5" targetElement="_7">
+      <bpmndi:BPMNEdge bpmnElement="_8" id="BPMNEdge__8" sourceElement="re_attend_approve" targetElement="re_attend_end">
         <omgdi:waypoint x="450.0" y="227.5"/>
         <omgdi:waypoint x="525.0" y="231.0"/>
         <bpmndi:BPMNLabel>

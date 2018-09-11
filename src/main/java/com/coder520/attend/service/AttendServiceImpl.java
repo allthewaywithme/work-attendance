@@ -2,9 +2,9 @@ package com.coder520.attend.service;
 
 import com.coder520.attend.dao.AttendMapper;
 import com.coder520.attend.entity.Attend;
+import com.coder520.attend.vo.QueryCondition;
 import com.coder520.common.page.PageQueryBean;
 import com.coder520.common.utils.DateUtils;
-import com.coder520.vo.QueryCondition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,20 +16,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
- * Created with IntelliJ IDEA.
- * Description:
- *
- * @Author: yangzhicheng
- * @Date: 2018/9/8 16:26
+ * Created by JackWangon[www.aiprogram.top] 2017/6/20.
  */
-@Service
-public class AttendServiceImpl implements AttendService {
-
-    private Log log=LogFactory.getLog(AttendServiceImpl.class);
-
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+@Service("attendServiceImpl")
+public class AttendServiceImpl implements AttendService{
 
     /**
      * 中午十二点 判定上下午
@@ -55,30 +48,42 @@ public class AttendServiceImpl implements AttendService {
     private static final Byte ATTEND_STATUS_ABNORMAL = 2;
     private static final Byte ATTEND_STATUS_NORMAL = 1;
 
+
+    private Log log = LogFactory.getLog(AttendServiceImpl.class);
+
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
     @Autowired
     private AttendMapper attendMapper;
 
     @Override
-    public void signAttend(Attend attend) {
-
+    @Transactional
+    public void signAttend(Attend attend) throws Exception {
         try {
-            Date today=new Date();
-            //设置考情日期
-            attend.setAttendDate(new Date());
+            Date today = new Date();
+            attend.setAttendDate(today);
             attend.setAttendWeek((byte)DateUtils.getTodayWeek());
-            //获取当天打卡记录
-            Attend todayRecord = attendMapper.selectTodaySignRecord(attend.getUserId());
-            Date noon = DateUtils.getDate(NOON_HOUR, NOON_MINUTE);
-            if (todayRecord==null){
-                if (today.compareTo(noon)<=0){
+            //查询当天 此人有没有打卡记录
+            Attend todayRecord=attendMapper.selectTodaySignRecord(attend.getUserId());
+            Date noon = DateUtils.getDate(NOON_HOUR,NOON_MINUTE);
+            Date morningAttend = DateUtils.getDate(MORNING_HOUR,MORNING_MINUTE);
+            if(todayRecord==null){
+                //打卡记录还不存在
+                if(today.compareTo(noon)<=0){
                     //打卡时间 早于12点 上午打卡
                     attend.setAttendMoring(today);
+                    //计算打卡时间是不是迟到
+                    if(today.compareTo(morningAttend)>0){
+                        //大于九点半迟到了
+                        attend.setAttendStatus(ATTEND_STATUS_ABNORMAL);
+                        attend.setAbsence(DateUtils.getMunite(morningAttend,today));
+                    }
+
                 }else {
                     attend.setAttendEvening(today);
                 }
-                //插入打卡数据
                 attendMapper.insertSelective(attend);
-            }else {
+            }else{
                 if(today.compareTo(noon)<=0){
                     //打卡时间 早于12点 上午打卡
                     return;
@@ -96,47 +101,43 @@ public class AttendServiceImpl implements AttendService {
                         todayRecord.setAbsence(0);
                     }
                     attendMapper.updateByPrimaryKeySelective(todayRecord);
-//                    if (today.compareTo(noon)<=0){
-//                        //打卡时间早上12点 上午打卡
-//                        return;
-//                    }else {
-//                        //晚上打卡
-//                        todayRecord.setAttendEvening(today);
-//                        attendMapper.updateByPrimaryKeySelective(todayRecord);
-//                    }
-
                 }
             }
 
-
-
-//            attendMapper.insertSelective(attend);
-        } catch (Exception e) {
-            log.error("用户签到失败",e);
+        }catch (Exception e){
+            log.error("用户签到异常",e);
             throw e;
         }
+
     }
 
     @Override
-    public PageQueryBean listAttend(QueryCondition queryCondition) {
+    public PageQueryBean listAttend(QueryCondition condition) {
         //根据条件查询 count记录数目
-        //如果有记录 才去查询分页数据 没有相关记录数目  没有必要查询分页数据、
-       int count= attendMapper.countByCondition(queryCondition);
-        PageQueryBean pageResult=new PageQueryBean();
-       if (count>0){
-           pageResult.setTotalRows(count);
-           pageResult.setCurrentPage(queryCondition.getCurrentPage());
-           pageResult.setPageSize(queryCondition.getPageSize());
-           List<Attend> attends = attendMapper.selectAttendPage(queryCondition);
-           pageResult.setItems(attends);
-
-       }
+        int count = attendMapper.countByCondition(condition);
+        PageQueryBean pageResult = new PageQueryBean();
+        if(count>0){
+            pageResult.setTotalRows(count);
+            pageResult.setCurrentPage(condition.getCurrentPage());
+            pageResult.setPageSize(condition.getPageSize());
+            List<Attend> attendList =  attendMapper.selectAttendPage(condition);
+            pageResult.setItems(attendList);
+        }
+        //如果有记录 才去查询分页数据 没有相关记录数目 没必要去查分页数据
         return pageResult;
     }
 
+    /**
+     * @Description: 检查考勤异常数据
+     * @author: wangjianbin
+     * @Param:  []
+     * @Return: void
+     * @Date:   15:30 2017/6/26
+     */
     @Override
     @Transactional
     public void checkAttend() {
+
         //查询缺勤用户ID 插入打卡记录  并且设置为异常 缺勤480分钟
         List<Long> userIdList =attendMapper.selectTodayAbsence();
         if(CollectionUtils.isNotEmpty(userIdList)){
@@ -163,4 +164,6 @@ public class AttendServiceImpl implements AttendService {
         }
 
     }
+
+
 }

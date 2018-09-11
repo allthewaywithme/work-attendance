@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0">
 
-  <display-name>Archetype Created Web Application</display-name>
 
+  <display-name>word-attendance</display-name>
 
   <context-param>
     <param-name>contextConfigLocation</param-name>
@@ -24,19 +24,19 @@
   </filter>
   <filter-mapping>
     <filter-name>encodingFilter</filter-name>
-    <url-pattern>/</url-pattern>
+    <url-pattern>/*</url-pattern>
   </filter-mapping>
   <!-- Spring监听器 -->
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
-  <!--&lt;!&ndash;shiro权限过滤器&ndash;&gt;
+  <!--shiro权限过滤器-->
   <filter>
     <filter-name>shiroFilter</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     <async-supported>true</async-supported>
     <init-param>
-      &lt;!&ndash; 该值缺省为false,表示生命周期由SpringApplicationContext管理,设置为true则表示由ServletContainer管理 &ndash;&gt;
+      <!-- 该值缺省为false,表示生命周期由SpringApplicationContext管理,设置为true则表示由ServletContainer管理 -->
       <param-name>targetFilterLifecycle</param-name>
       <param-value>true</param-value>
     </init-param>
@@ -44,7 +44,7 @@
   <filter-mapping>
     <filter-name>shiroFilter</filter-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping>-->
+  </filter-mapping>
   <!-- Spring MVC servlet -->
   <servlet>
     <servlet-name>SpringMVC</servlet-name>
@@ -61,7 +61,6 @@
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 
-  <!--static下的所有资源都不拦截 针对spring-mvc里的拦截器的拦截所有资源-->
   <servlet-mapping>
     <servlet-name>default</servlet-name>
     <url-pattern>/static/*</url-pattern>
@@ -79,11 +78,5 @@
     <error-code>500</error-code>
     <location>/error/500.html</location>
   </error-page>
-  <welcome-file-list>
-    <welcome-file>/index.html</welcome-file>
-  </welcome-file-list>
-
-
-
 
 </web-app>

@@ -79,7 +79,7 @@
   </delete>
   <insert id="batchInsert" parameterType="list" >
     insert into attend (user_id, attend_date,
-      attend_week, absence, attend_status)
+    attend_week, absence, attend_status)
     values
     <foreach collection="list" item="item" index="index" separator="," >
       (#{item.userId}, #{item.attendDate},#{item.attendWeek}, #{item.absence},#{item.attendStatus})

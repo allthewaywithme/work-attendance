@@ -15,15 +15,24 @@ public class User {
 
     private String headImage;
 
-//    private List<Role> roleList;
-//
-//    public List<Role> getRoleList() {
-//        return roleList;
-//    }
-//
-//    public void setRoleList(List<Role> roleList) {
-//        this.roleList = roleList;
-//    }
+    private List<Role> roleList;
+
+    public User() {
+    }
+
+    public User(Long id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+
+    public List<Role> getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(List<Role> roleList) {
+        this.roleList = roleList;
+    }
 
     public Long getId() {
         return id;

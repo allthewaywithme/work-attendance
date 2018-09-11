@@ -89,7 +89,7 @@
         <!--自动部署流程-->
         <property name="deploymentResources">
             <list>
-                <!--<value>classpath*:workflow/*.bpmn</value>-->
+                <value>classpath*:workflow/*.bpmn</value>
             </list>
         </property>
     </bean>
@@ -114,6 +114,7 @@
 
     <!--开启定时器-->
     <!--<import resource="spring-job.xml"/>-->
+    <import resource="spring-shiro.xml"/>
 
 
 </beans>
